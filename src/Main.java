@@ -1,6 +1,8 @@
 
 ///неудача:(
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -16,7 +18,7 @@ public class Main {
         RussianSymbolValidator surname= new RussianSymbolValidator(person1.getSurname());
         //System.out.println("..... тест записи валидатора: "+str);
 
-        //далее нужно делать метод метод для isValid...
+        //далее нужно делать метод или функцию для isValid...
         boolean isValid=surname.testStringValidity();
         if(isValid){
             //сохранение данных
@@ -95,20 +97,37 @@ public class Main {
 
         System.out.println("Проверка введённых данных: " +person1);
 
+        //Создание и запись в файл
+        writePersonToFile(person1);
+
     }
 
     public static Person getPersonFromUser(){
         Scanner scanner= new Scanner(System.in);
-        System.out.println("начинай со строки ниже:");
+        System.out.println("Преступите со строки ниже:");
         String userdata= scanner.nextLine();
         String[] data= userdata.split(" ");
-        //Где лучше обработать?
+
+        //как лучше обработать?
         if(data.length==6) {
             return new Person(data[0], data[1], data[2], data[3], data[4], data[5]);
         }
         else {
-            return null;
+            return new Person( "Фамилия","Имя", "Отчество", "число(2 цифры).месяц(2 цифры).год_рождения (4цифры)", "номер телефона(11 цифр)"," m или f" );
         }
+        //try {
+        //    if(data.length==6) {
+        //        return new Person(data[0], data[1], data[2], data[3], data[4], data[5]);
+        //    }
+        //    else {
+        //        throw new ArrayIndexOutOfBoundsException(" Нехватает данных или некорректный ввод ");
+        //    }
+        //}
+        //catch(ArrayIndexOutOfBoundsException e){
+        //    System.out.println(e.getMessage())
+        //    return new Person( "Фамилия","Имя", "Отчество", "число.месяц.год_рождения", "номер телефона(11 цифр)"," м или ж" );
+        //}
+
     }
 
     public static boolean isGenderValid(String gender) {
@@ -116,6 +135,19 @@ public class Main {
             return "f".equals(gender) || "m".equals(gender);
         } catch (IllegalArgumentException e) {
             return false;
+        }
+    }
+
+    public static void writePersonToFile(Person person) {
+        // Получаем фамилию для создания имени файла
+        String fileName = person.getSurname() + ".txt";
+
+        // Записываем информацию в файл
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+            writer.write(person.toString());
+            System.out.println("Информация успешно записана в файл " + fileName);
+        } catch (IOException e) {
+            System.err.println("Ошибка при записи в файл " + fileName + ": " + e.getMessage());
         }
     }
 }
